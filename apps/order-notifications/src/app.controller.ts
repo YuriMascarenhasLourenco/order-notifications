@@ -1,12 +1,15 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { AppService } from './app.service';
+import { EventPattern } from '@nestjs/microservices';
+import { NOTIFICATION_MESSAGE } from 'constant';
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  @EventPattern(NOTIFICATION_MESSAGE)
+  handleSendNotification(order: any) {
+    console.log('Notification Event Received:', order);
+    // Lógica para enviar notificação (e.g., email, SMS, etc.)
   }
 }
