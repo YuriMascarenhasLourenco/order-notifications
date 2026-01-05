@@ -21,6 +21,25 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
-    "paths": {}
+    "paths": {
+      "event-lib/events": [
+        "libs/events/src"
+      ],
+      "event-lib/events/*": [
+        "libs/events/src/*"
+      ],
+      "lib/my-library": [
+        "libs/my-library/src"
+      ],
+      "lib/my-library/*": [
+        "libs/my-library/src/*"
+      ],
+      "rabbitmq/rabbitmq": [
+        "libs/rabbitmq/src"
+      ],
+      "rabbitmq/rabbitmq/*": [
+        "libs/rabbitmq/src/*"
+      ]
+    }
   }
 }
