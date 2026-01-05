@@ -3,3 +3,7 @@ export * from './events.service';
 export * from './events/notification-send-v1.event';
 export * from './events/order-created-v1.event';
 export * from './events/payment-process-v1.event';
+export * from './messaging/envelope/envelope';
+export * from './messaging/queues/queues';
+export * from './messaging/rpc/rpc';
+export * from './messaging/tokens/tokens';
