@@ -22,16 +22,13 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "event-lib/events": [
-        "libs/events/src"
+      "@lib/events": [
+        "libs/events/src/index.ts"
       ],
-      "event-lib/events/*": [
-        "libs/events/src/*"
-      ],
-      "lib/my-library": [
+      "@lib/my-library": [
         "libs/my-library/src"
       ],
-      "lib/my-library/*": [
+      "@lib/my-library/*": [
         "libs/my-library/src/*"
       ],
       "rabbitmq/rabbitmq": [
