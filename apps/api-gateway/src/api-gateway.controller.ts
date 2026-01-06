@@ -2,9 +2,11 @@ import { Body, Controller, Inject, Post } from '@nestjs/common';
 import { ApiGatewayService } from './api-gateway.service';
 import { ORDER_SERVICE } from '../constant';
 import { ClientProxy } from '@nestjs/microservices';
-import { CreateOrderDto } from 'lib/my-library';
-import { ORDER_CREATED_V1, OrderCreatedV1 } from 'event-lib/events';
+
+
 import { randomUUID } from 'crypto';
+import { CreateOrderDto } from '@lib/my-library';
+import { ORDER_CREATED_V1, type OrderCreatedV1 } from '@lib/events';
 
 @Controller()
 export class ApiGatewayController {
