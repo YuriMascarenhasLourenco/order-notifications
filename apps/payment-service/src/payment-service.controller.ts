@@ -1,14 +1,19 @@
 import { Controller } from '@nestjs/common';
 import { PaymentServiceService } from './payment-service.service';
 import { EventPattern } from '@nestjs/microservices';
-import { PAYMENT_MESSAGE } from 'constant';
+import { PAYMENT_PROCESS_V1, type PaymentProcessV1 } from '@lib/events';
 
 @Controller()
 export class PaymentServiceController {
   constructor(private readonly paymentServiceService: PaymentServiceService) {}
-  @EventPattern(PAYMENT_MESSAGE)
-  handleProcessPayment(order: any) {
-    console.log('Process Payment Event Received:', order);
-    // Lógica para processar o pagamento (e.g., integração com gateway de pagamento)
+  @EventPattern(PAYMENT_PROCESS_V1)
+  async handleProcessPayment(order: PaymentProcessV1) {
+    const amountInCents = order.payload.price * 100;
+    console.log(`amountInCents: ${amountInCents}`);
+    await this.paymentServiceService.createPaymentIntent(
+      amountInCents,
+      'usd',
+      order.payload.quantity,
+    );
   }
 }
