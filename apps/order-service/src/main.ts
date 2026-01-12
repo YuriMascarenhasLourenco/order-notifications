@@ -1,25 +1,14 @@
 import { NestFactory } from '@nestjs/core';
-import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { MicroserviceOptions } from '@nestjs/microservices';
 import { Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { ORDER_QUEUE } from 'constant';
 import { OrderServiceModule } from 'apps/order-service/src/order-service.module';
+import { createRmqMicroserviceOptions } from 'rabbitmq/rabbitmq/config/microservice/create-microservice';
+import { QUEUES } from '@lib/events';
 
 async function bootstrap() {
-  const appContext =
-    await NestFactory.createApplicationContext(OrderServiceModule);
-  const config = appContext.get(ConfigService);
-
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     OrderServiceModule,
-    {
-      transport: Transport.RMQ,
-      options: {
-        urls: [config.getOrThrow<string>('RABBITMQ_URL')],
-        queue: ORDER_QUEUE,
-        queueOptions: { durable: true },
-      },
-    },
+    createRmqMicroserviceOptions(QUEUES.ORDER),
   );
 
   await app.listen();
