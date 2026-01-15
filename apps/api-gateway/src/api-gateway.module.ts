@@ -3,25 +3,24 @@ import { ApiGatewayController } from './api-gateway.controller';
 import { ApiGatewayService } from './api-gateway.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { ORDER_SERVICE } from '../constant';
-import { ORDER_QUEUE } from 'constant';
+import { QUEUES, RMQClients } from '@lib/events';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ['.env.local', '.env'],
     }),
     ClientsModule.registerAsync([
       {
-        name: ORDER_SERVICE,
+        name: RMQClients.ORDER_SERVICE,
         imports: [ConfigModule],
         useFactory: (configService: ConfigService) => ({
           transport: Transport.RMQ,
           options: {
             urls: [configService.getOrThrow<string>('RABBITMQ_URL')],
-            queue: ORDER_QUEUE,
+            queue: QUEUES.ORDER,
             queueOptions: { durable: true },
+            noAck: true,
           },
         }),
         inject: [ConfigService],
