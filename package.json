@@ -7,6 +7,10 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
+     "build:api-gateway": "nest build api-gateway",
+    "build:order-service": "nest build order-service",
+    "build:order-notifications": "nest build order-notifications",
+    "build:payment-service": "nest build payment-service",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -25,14 +29,23 @@
     "dev": "concurrently \"npm run start:gateway\" \"npm run start:order-service\" \"npm run start:payment-service\" \"npm run start:notifications\""
   },
   "dependencies": {
+    "@nestjs-modules/mailer": "^2.0.2",
     "@nestjs/common": "^11.0.1",
+    "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
     "@nestjs/microservices": "^11.1.11",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/swagger": "^11.2.4",
+    "@nestjs/typeorm": "^11.0.0",
     "amqp-connection-manager": "^5.0.0",
     "amqplib": "^0.10.9",
+    "nodemailer": "^7.0.12",
+    "pg": "^8.16.3",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "stripe": "^20.1.1",
+    "swagger-ui-express": "^5.0.1",
+    "typeorm": "^0.3.28"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
@@ -43,6 +56,8 @@
     "@types/express": "^5.0.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^22.10.7",
+    "@types/nodemailer": "^7.0.4",
+    "@types/stripe": "^8.0.416",
     "@types/supertest": "^6.0.2",
     "concurrently": "^9.2.1",
     "eslint": "^9.18.0",
