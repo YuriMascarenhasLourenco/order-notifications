@@ -1,98 +1,175 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+Payment Processing Microservices – NestJS Monorepo
+Overview
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This project is a NestJS monorepo (without Nx) that implements a microservices-based payment processing system, designed to simulate a real-world e-commerce transaction flow using modern backend technologies.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+The architecture is composed of an API Gateway and three independent microservices, fully containerized and orchestrated with Docker Compose. Communication between services is handled asynchronously via RabbitMQ, while PostgreSQL is used for data persistence.
 
-## Description
+The primary goal of this project is to demonstrate scalable system design, service decoupling, and event-driven communication, closely resembling production-grade payment processing systems.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Architecture
 
-## Project setup
+The system consists of the following components:
 
-```bash
-$ npm install
-```
+API Gateway
 
-## Compile and run the project
+Single public entry point to the system
 
-```bash
-# development
-$ npm run start
+Validates incoming requests
 
-# watch mode
-$ npm run start:dev
+Routes commands and events to the appropriate microservices
 
-# production mode
-$ npm run start:prod
-```
+Order Service
 
-## Run tests
+Responsible for order creation and persistence
 
-```bash
-# unit tests
-$ npm run test
+Stores order data in PostgreSQL
 
-# e2e tests
-$ npm run test:e2e
+Publishes events to RabbitMQ when an order is created
 
-# test coverage
-$ npm run test:cov
-```
+Payment Service
 
-## Deployment
+Handles payment processing
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+Integrates with the Stripe Payment Gateway (sandbox/test mode)
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Reacts to order events to initiate payment workflows
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+Order Notifications Service
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Responsible for sending notifications
 
-## Resources
+Uses Gmail SMTP via Nodemailer to send transactional emails
 
-Check out a few resources that may come in handy when working with NestJS:
+Consumes events from RabbitMQ
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+Technology Stack
 
-## Support
+Backend Framework: NestJS (monorepo without Nx)
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Language: TypeScript
 
-## Stay in touch
+Messaging: RabbitMQ
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Database: PostgreSQL
 
-## License
+Payments: Stripe API (test environment)
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Email: Gmail SMTP (Nodemailer)
+
+Containerization: Docker & Docker Compose
+
+Architecture Style: Microservices + Event-Driven Architecture
+
+Why Microservices?
+
+This project uses microservices to:
+
+Decouple business responsibilities (orders, payments, notifications)
+
+Enable independent execution and scalability
+
+Improve fault isolation
+
+Allow asynchronous processing through message queues
+
+Simulate real production payment pipelines
+
+Each service runs in its own container and communicates through RabbitMQ, ensuring loose coupling and parallel execution of workflows.
+
+.
+├── apps
+│   ├── api-gateway
+│   ├── order-service
+│   ├── payment-service
+│   └── order-notifications
+│
+├── libs
+│   ├── rabbitmq
+│   └── events
+    └──my-library
+│
+├── docker-compose.yml
+├── package.json
+└── README.md
+
+
+
+Each service has its own:
+
+NestJS application
+
+Environment configuration
+
+Database or messaging dependencies as needed
+
+Running the Project
+Prerequisites
+
+Docker
+
+Docker Compose
+
+Start the Application
+
+All services, including PostgreSQL and RabbitMQ, are orchestrated via Docker Compose.
+
+docker compose up -d
+
+
+This command will:
+
+Start RabbitMQ and PostgreSQL
+
+Build and run all NestJS services
+
+Automatically handle service dependencies via Docker health checks
+
+Once running, the API Gateway will be available and ready to accept requests.
+
+Environment Configuration
+
+Each service uses its own environment variables for configuration, such as:
+
+Database connection details
+
+RabbitMQ connection URLs
+
+Stripe API keys
+
+SMTP credentials
+
+Sensitive values should be stored in .env files and are not committed to the repository.
+
+Key Learning Outcomes
+
+This project demonstrates:
+
+Designing microservices with NestJS
+
+Implementing asynchronous communication with RabbitMQ
+
+Coordinating multiple services using Docker Compose
+
+Integrating external services (Stripe, SMTP)
+
+Applying real-world backend architectural patterns
+
+Future Improvements
+
+Possible extensions to this project include:
+
+Distributed tracing and observability
+
+Centralized logging
+
+Retry and idempotency mechanisms
+
+Authentication and authorization
+
+Kubernetes deployment
+
+Author
+Yuri Lourenço
+
+Developed as a hands-on backend architecture project to simulate real-world payment processing systems using modern JavaScript technologies.
