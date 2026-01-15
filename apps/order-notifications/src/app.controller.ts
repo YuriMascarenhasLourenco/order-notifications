@@ -8,7 +8,7 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @EventPattern(NOTIFICATION_SEND_V1)
- async handleSendNotification(order: NotificationSendV1) {
+  async handleSendNotification(order: NotificationSendV1) {
     console.log('Notification Event Received:', order);
     // Lógica para enviar notificação (e.g., email, SMS, etc.)
     await this.appService.sendNotification(order);
