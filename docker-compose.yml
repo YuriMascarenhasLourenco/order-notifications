@@ -2,10 +2,111 @@ services:
   rabbitmq:
     image: rabbitmq:3-management
     container_name: order-notifications-rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 90s
+      retries: 10
+      start_period: 90s
     ports:
-      - "5672:5672"       # RabbitMQ default port
-      - "15672:15672"     # RabbitMQ management UI port
+      - "5672:5672"
+      - "15672:15672"
     environment:
       RABBITMQ_DEFAULT_USER: user
       RABBITMQ_DEFAULT_PASS: password
-   
+    networks: [backend]
+    volumes:
+      - rabbitmqdata:/var/lib/rabbitmq
+
+  postgres:
+    image: postgres:13
+    container_name: order-notifications-postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d order_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: order_db
+    ports:
+      - "5432:5432"
+    networks: [backend]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: apps/api-gateway/dockerfile
+    container_name: order-notifications-api-gateway
+    env_file: [.env]
+    ports:
+      - "3000:3000"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks: [backend]
+
+  order-service:
+    build:
+      context: .
+      dockerfile: apps/order-service/dockerfile
+    container_name: order-notifications-order-service
+    env_file:
+      - .env
+      - apps/order-service/.env.order
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks: [backend]
+
+  order-notifications:
+    build:
+      context: .
+      dockerfile: apps/order-notifications/dockerfile
+    container_name: order-notifications-service
+    env_file:
+      - .env
+      - apps/order-notifications/.env.notification
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      order-service:
+        condition: service_started
+      api-gateway:
+        condition: service_started
+    networks: [backend]
+
+  payment-service:
+    build:
+      context: .
+      dockerfile: apps/payment-service/dockerfile
+    container_name: order-notifications-payment-service
+    env_file:
+      - .env
+      - apps/payment-service/.env.payment
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      order-service:
+        condition: service_started
+      api-gateway:
+        condition: service_started
+    networks: [backend]
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  pgdata:
+  rabbitmqdata:
